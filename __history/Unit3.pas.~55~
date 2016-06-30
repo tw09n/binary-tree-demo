@@ -1,0 +1,208 @@
+unit Unit3;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, System.Generics.collections;
+
+type
+  PNode = ^TTreeNode;
+  TTreeNode = record
+    Key : Integer;
+    LeftNode : PNode;
+    RightNode : PNode;
+    ParentNode : PNode;
+  end;
+
+  TForm3 = class(TForm)
+    btn1: TButton;
+    mmo1: TMemo;
+    btn2: TButton;
+    btn3: TButton;
+    btn4: TButton;
+    btn5: TButton;
+    btn6: TButton;
+    procedure btn1Click(Sender: TObject);
+    procedure btn2Click(Sender: TObject);
+    procedure btn3Click(Sender: TObject);
+    procedure btn4Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure btn5Click(Sender: TObject);
+    procedure btn6Click(Sender: TObject);
+  private
+    FRoot : PNode;
+    procedure AddNewNode(KeyValue : Integer);
+    procedure InsertNode(ParentNode, Node : PNode);
+
+    procedure PreOrder(NowNode : PNode);
+    procedure InOrder(NowNode : PNode);
+    procedure PostOrder(NowNode : PNode);
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form3: TForm3;
+
+implementation
+
+{$R *.dfm}
+
+{ TForm3 }
+
+procedure TForm3.AddNewNode(KeyValue: Integer);
+var
+  Node : PNode;
+begin
+  New(Node);
+  FillChar(Node^, Sizeof(TTreeNode), 0);
+  Node.Key := KeyValue;
+
+  if FRoot = nil then
+  begin
+    FRoot := Node;
+    Exit;
+  end;
+  InsertNode(FRoot, Node);
+end;
+
+procedure TForm3.btn1Click(Sender: TObject);
+begin
+  AddNewNode(10);
+  AddNewNode(12);
+  AddNewNode(7);
+  AddNewNode(13);
+  AddNewNode(6);
+  AddNewNode(11);
+  AddNewNode(8);
+  AddNewNode(9);
+end;
+
+procedure TForm3.btn2Click(Sender: TObject);
+begin
+  mmo1.Lines.Add('PreOrder Start : --------------------------');
+  PreOrder(FRoot);
+end;
+
+procedure TForm3.btn3Click(Sender: TObject);
+begin
+  mmo1.Lines.Add('InOrder Start : ---------------------------');
+  InOrder(FRoot);
+end;
+
+procedure TForm3.btn4Click(Sender: TObject);
+begin
+  mmo1.Lines.Add('PostOrder Start : --------------------------');
+  PostOrder(FRoot);
+end;
+
+
+procedure TForm3.btn5Click(Sender: TObject);
+var
+  Node : PNode;
+  FBFS : TQueue<PNode>;
+begin
+  FBFS := TQueue<PNode>.Create;
+  mmo1.Lines.Add('BFS Start : --------------------------');
+
+  FBFS.Enqueue(FRoot);
+  while (FBFS.Count > 0) do
+  begin
+    Node := FBFS.Dequeue;
+    mmo1.Lines.Add(IntToStr(Node.Key));
+    if Assigned(Node.LeftNode) then
+      FBFS.Enqueue(Node.LeftNode);
+    if Assigned(Node.RightNode) then
+      FBFS.Enqueue(Node.RightNode);
+  end;
+
+  FreeAndNil(FBFS);
+end;
+
+procedure TForm3.btn6Click(Sender: TObject);
+var
+  Node : PNode;
+  FDFS : TStack<PNode>;
+begin
+  FDFS := TStack<PNode>.Create;
+  mmo1.Lines.Add('DFS Start : --------------------------');
+
+  FDFS.Push(FRoot);
+  while (FDFS.Count > 0) do
+  begin
+    Node := FDFS.pop;
+    mmo1.Lines.Add(IntToStr(Node.Key));
+  end;
+end;
+
+procedure TForm3.FormCreate(Sender: TObject);
+begin
+  FRoot := nil;
+end;
+
+procedure TForm3.InOrder(NowNode: PNode);
+begin
+  if not Assigned(NowNode) then
+    Exit;
+
+  if Assigned(NowNode.LeftNode) then
+    InOrder(NowNode.LeftNode);
+  mmo1.Lines.Add(IntToStr(NowNode.Key));
+  if Assigned(NowNode.RightNode) then
+    InOrder(NowNode.RightNode);
+end;
+
+procedure TForm3.InsertNode(ParentNode, Node: PNode);
+begin
+  if Node.Key > ParentNode.Key then
+  begin
+    if ParentNode.RightNode = nil then
+    begin
+      ParentNode.RightNode := Node;
+      ParentNode.RightNode.ParentNode := ParentNode;
+    end
+    else
+      InsertNode(ParentNode.RightNode, Node);
+  end
+  else
+  if Node.Key < ParentNode.Key then
+  begin
+    if ParentNode.LeftNode = nil then
+    begin
+      ParentNode.LeftNode := Node;
+      ParentNode.LeftNode.ParentNode := ParentNode;
+    end
+    else
+      InsertNode(ParentNode.LeftNode, Node);
+  end
+  else if Node.Key = ParentNode.Key then
+    Dispose(Node);
+end;
+
+procedure TForm3.PostOrder(NowNode: PNode);
+begin
+  if not Assigned(NowNode) then
+    Exit;
+
+  if Assigned(NowNode.LeftNode) then
+    PostOrder(NowNode.LeftNode);
+  if Assigned(NowNode.RightNode) then
+    PostOrder(NowNode.RightNode);
+  mmo1.Lines.Add(IntToStr(NowNode.Key));
+end;
+
+procedure TForm3.PreOrder(NowNode : PNode);
+begin
+  if not Assigned(NowNode) then
+    Exit;
+
+  mmo1.Lines.Add(IntToStr(NowNode.Key));
+  if Assigned(NowNode.LeftNode) then
+    PreOrder(NowNode.LeftNode);
+  if Assigned(NowNode.RightNode) then
+    PreOrder(NowNode.RightNode);
+end;
+
+end.

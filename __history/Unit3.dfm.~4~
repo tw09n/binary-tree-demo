@@ -1,0 +1,56 @@
+object Form3: TForm3
+  Left = 0
+  Top = 0
+  Caption = 'Form3'
+  ClientHeight = 222
+  ClientWidth = 413
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 120
+  TextHeight = 16
+  object btn1: TButton
+    Left = 16
+    Top = 8
+    Width = 75
+    Height = 25
+    Caption = 'New'
+    TabOrder = 0
+    OnClick = btn1Click
+  end
+  object mmo1: TMemo
+    Left = 112
+    Top = 8
+    Width = 297
+    Height = 209
+    TabOrder = 1
+  end
+  object btn2: TButton
+    Left = 16
+    Top = 39
+    Width = 75
+    Height = 25
+    Caption = 'PreOrder'
+    TabOrder = 2
+  end
+  object btn3: TButton
+    Left = 16
+    Top = 70
+    Width = 75
+    Height = 25
+    Caption = 'InOrder'
+    TabOrder = 3
+  end
+  object btn4: TButton
+    Left = 16
+    Top = 101
+    Width = 75
+    Height = 25
+    Caption = 'PostOrder'
+    TabOrder = 4
+  end
+end
